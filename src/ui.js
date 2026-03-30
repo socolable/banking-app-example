@@ -6,7 +6,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 const toastContainer = document.querySelector('#toast-container');
 
 const toast = document.createElement('div');
-//console.log(toast);
+console.log(toast);
 toast.classList.add('toast');
 toast.textContent = 'Successfully deposit! Hoora!';
 
