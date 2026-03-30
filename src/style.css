@@ -1,5 +1,6 @@
-body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f4; }
-.container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; }
+body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: black; color:#ffffff}
+
+.container { background: black; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; }
 
 button { padding: 10px; cursor: pointer; border: none; border-radius: 4px; color: white; margin-top: 10px; }
 button:disabled {
