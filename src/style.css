@@ -1,0 +1,77 @@
+body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f4; }
+.container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; }
+
+button { padding: 10px; cursor: pointer; border: none; border-radius: 4px; color: white; margin-top: 10px; }
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+#deposit-btn { background: #28a745; }
+#withdraw-btn { background: #dc3545; }
+#clear-all-btn {background: blue;}
+.delete-btn {background: black;}
+.retry-btn {background: pink;}
+input { width: 93%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; }
+ul { list-style: none; padding: 0; }
+li { padding: 8px; border-bottom: 1px solid #eee; }
+.deposit-item { color: green; }
+.withdraw-item { color: red; }
+
+
+.loader {
+  border: 8px solid #f3f3f3; /* Light grey border */
+  border-top: 8px solid #3498db; /* Blue border on top */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite; /* Animation effect */
+  /* Centering the spinner */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -20px; /* Half of height */
+  margin-left: -20px; /* Half of width */
+}
+
+.spinner{
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 14px; /* Tiny! */
+  height: 14px;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+#toast-container{
+
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  z-index: 999;
+}
+
+.toast{
+  border: 2px solid black;
+  background-color: lightgreen;
+  
+  width: 200px;
+  height: 64px;
+
+  color: black;
+  padding: 8px;
+  opacity: 0;
+}
+
+.toast.show{
+  opacity: 1;
+}

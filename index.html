@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=flag" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>banking-app-pro</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+
+    <div class="container">
+        <div id="toast-container"></div>
+        <h1>Bank Balance: <span id="balance-display">$0</span></h1>
+        
+        <div class="controls" id="controls">
+            <input type="number" id="amount-input" placeholder="Enter amount">
+            <button id="deposit-btn">Deposit</button>
+            <button id="withdraw-btn">Withdraw</button>
+            <button id="clear-all-btn">Clear all</button>
+        </div>
+        <h3>Search and filter</h3>
+        <input type="text" id="search-input" placeholder="Enter search keyword">
+
+        <h3>Deposits and Withdrawals</h3>
+        <span id="total-deposit"></span>
+        <span id="total-withdraw"></span>
+
+        <h3>Transaction History</h3>
+        <ul id="transaction-list"></ul>
+    </div>
+  </body>
+</html>
