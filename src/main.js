@@ -61,24 +61,42 @@ function updateApp(dataToShow = transactionHistory){
 
 // --- 5. EVENT LISTENERS ---
 
-depositBtn.addEventListener('click', () => {
+depositBtn.addEventListener('click', (e) => {
     const rawValue = amountInput.value;
-
+    const button = e.currentTarget;
+    const originalText = button.textContent;
+    
     if (!isValid(rawValue)) return;
+
+    // disable Deposit button after clicking to avoid double-click
+    button.disabled = true;
+    button.textContent = "processing...";
     
     const amount = Number(rawValue);
     
     currentBalance += amount;
     transactionHistory.push({id: Date.now(), amount, type: 'deposit'});
     showToast();
-    
     updateApp();
+
+    // enable Deposit button 1 second after clicking
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.disabled = false;  
+    }, 600);
 });
 
-withdrawBtn.addEventListener('click', () => {
+withdrawBtn.addEventListener('click', (e) => {
     const rawValue = amountInput.value;
 
     if (!isValid(rawValue)) return;
+    
+    const button = e.currentTarget;
+    const originalText = button.textContent;
+
+    // disable Withdraw button after clicking to avoid double click
+    button.disabled = true;
+    button.textContent = "processing...";
 
     const amount = Number(rawValue);
     
@@ -88,9 +106,14 @@ withdrawBtn.addEventListener('click', () => {
     }
 
     currentBalance -= amount;
-        transactionHistory.push({id: Date.now(), amount, type: 'withdraw'});
-        
-        updateApp();
+    transactionHistory.push({id: Date.now(), amount, type: 'withdraw'});
+    updateApp();
+
+    // enable Withdraw button 1s after clicking
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+    }, 600);
 });
 
 clearAllBtn.addEventListener('click', () => {

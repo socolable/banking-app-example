@@ -20,6 +20,12 @@ export function isValid(rawValue) {
         return false;
     }
 
+    // Check that input does not include scientific notion
+    if (trimmedValue.toLowerCase().includes('e')){
+        alert("Please enter only numeral digits.");
+        return false;
+    }
+
     // Check if input is unreasonably large (sanity check) - input should not be greater than 10 mil
     if (num >= 10000000){
         alert("Transaction exceeds limit. Please enter an amount below 10 million.");

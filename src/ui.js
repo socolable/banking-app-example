@@ -73,7 +73,7 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
             //create delete button with X text and add to li element
             const deleteBtn = document.createElement('button');
             deleteBtn.innerText = "X";
-            deleteBtn.className = "delete-btn";
+            deleteBtn.id = "delete-btn";
 
             deleteBtn.setAttribute('data-id', transaction.id);
             newItem.appendChild(deleteBtn);
@@ -106,7 +106,7 @@ export function showError(selectors, error){
     selectors.transactionList.innerHTML = `Error: ${error}. Please try again.`;
     const retryBtn = document.createElement('button');
     retryBtn.innerText = "Retry";
-    retryBtn.className = "retry-btn";
+    retryBtn.id = "retry-btn";
     selectors.transactionList.appendChild(retryBtn);
 
     retryBtn.addEventListener('click', () => {window.location.reload()});

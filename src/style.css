@@ -7,17 +7,17 @@ button:disabled {
   opacity: 0.5;
 }
 
-#deposit-btn { background: #28a745; }
+#deposit-btn { background: #28a745;}
 #withdraw-btn { background: #dc3545; }
 #clear-all-btn {background: blue;}
-.delete-btn {background: black;}
-.retry-btn {background: pink;}
+#delete-btn {background: black;}
+#retry-btn {background:blue}
+
 input { width: 93%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; }
 ul { list-style: none; padding: 0; }
 li { padding: 8px; border-bottom: 1px solid #eee; }
 .deposit-item { color: green; }
 .withdraw-item { color: red; }
-
 
 .loader {
   border: 8px solid #f3f3f3; /* Light grey border */
