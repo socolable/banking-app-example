@@ -58,35 +58,39 @@ function updateApp(dataToShow = transactionHistory){
     renderUI(currentBalance, dataToShow, selectors, usdToEurRate, usdToGBPRate);
 }
 
+
 // --- 5. EVENT LISTENERS ---
 
 depositBtn.addEventListener('click', () => {
     const rawValue = amountInput.value;
-    if (isValid(rawValue)) {
-        const amount = Number(rawValue);
-        
-        currentBalance += amount;
-        transactionHistory.push({ amount, type: 'deposit' });
-        showToast();
-        
-        updateApp();
-    }
+
+    if (!isValid(rawValue)) return;
+    
+    const amount = Number(rawValue);
+    
+    currentBalance += amount;
+    transactionHistory.push({id: Date.now(), amount, type: 'deposit'});
+    showToast();
+    
+    updateApp();
 });
 
 withdrawBtn.addEventListener('click', () => {
     const rawValue = amountInput.value;
-    if (isValid(rawValue)) {
-        const amount = Number(rawValue);
-        
-        if (amount > currentBalance) {
-            alert("Insufficient funds!");
-        } else {
-            currentBalance -= amount;
-            transactionHistory.push({ amount, type: 'withdraw' });
-            
-            updateApp();
-        }
+
+    if (!isValid(rawValue)) return;
+
+    const amount = Number(rawValue);
+    
+    if (amount > currentBalance) {
+        alert("Insufficient funds!");
+        return;
     }
+
+    currentBalance -= amount;
+        transactionHistory.push({id: Date.now(), amount, type: 'withdraw'});
+        
+        updateApp();
 });
 
 clearAllBtn.addEventListener('click', () => {
@@ -102,20 +106,23 @@ clearAllBtn.addEventListener('click', () => {
 searchInput.addEventListener('input', () => {
     if(searchInput.value.length === 0){
        updateApp();
+       return
     }
-    else{
-        let filteredTransactions = transactionHistory.filter(transaction => String(transaction.amount).includes(searchInput.value));
-        
-        updateApp(filteredTransactions);}
+    
+    const filteredTransactions = transactionHistory.filter(transaction => String(transaction.amount).includes(searchInput.value));
+    updateApp(filteredTransactions);
 });
 
 transactionList.addEventListener('click', (e) => {
     if(e.target.classList.contains('delete-btn')){
-        console.log(`Succesfully find delete button`);
-        const index = Number(e.target.getAttribute('data-index'));
+        const idToDelete = Number(e.target.getAttribute('data-id'));
         
         
-        const itemToDelete = transactionHistory[index];
+        const itemToDelete = transactionHistory.find(transaction => transaction.id === idToDelete);
+        
+        // If cannot find the itemToDelete for some reason, stop
+        if (!itemToDelete) return;
+        
         if (itemToDelete.type === 'deposit'){
             currentBalance -= itemToDelete.amount;
         }
@@ -123,7 +130,8 @@ transactionList.addEventListener('click', (e) => {
             currentBalance += itemToDelete.amount;
         }
         
-        transactionHistory.splice(index, 1);
+        transactionHistory = transactionHistory.filter(transaction => transaction.id !== idToDelete);
+        
         updateApp();
     }
     

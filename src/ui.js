@@ -6,7 +6,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 const toastContainer = document.querySelector('#toast-container');
 
 const toast = document.createElement('div');
-console.log(toast);
 toast.classList.add('toast');
 toast.textContent = 'Successfully deposit! Hoora!';
 
@@ -66,7 +65,7 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
         // Wipe the list and rebuild it from the Array
         selectors.transactionList.innerHTML = "";
         
-        transactionArr.forEach((transaction, index) => {
+        transactionArr.forEach((transaction) => {
             const newItem = document.createElement('li');
             newItem.innerText = `${transaction.type === 'deposit' ? '+' : '-'}${formatter.format(transaction.amount)} `;
             newItem.classList.add(transaction.type === 'deposit' ? 'deposit-item' : 'withdraw-item');
@@ -75,11 +74,8 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
             const deleteBtn = document.createElement('button');
             deleteBtn.innerText = "X";
             deleteBtn.className = "delete-btn";
-            if(selectors.searchInput.value !== ""){
-                deleteBtn.disabled = true;
-            }
 
-            deleteBtn.setAttribute('data-index', index);
+            deleteBtn.setAttribute('data-id', transaction.id);
             newItem.appendChild(deleteBtn);
             selectors.transactionList.appendChild(newItem);
         }); 
