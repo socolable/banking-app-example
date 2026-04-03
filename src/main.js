@@ -39,7 +39,7 @@ async function initApp(){
             getExchangeRate("USD", "EUR"),
             getExchangeRate("USD", "GBP")
         ]);
-
+        console.log([usdToEurRate, usdToGBPRate]);
         updateApp();
 
     }

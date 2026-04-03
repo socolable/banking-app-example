@@ -59,7 +59,15 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
         
 
     if(transactionArr.length === 0){
-        selectors.transactionList.innerHTML = `No transactions yet. Start by making a deposit. <span class = "material-symbols-outlined">flag</span>`; 
+        selectors.transactionList.innerHTML = `
+        <div class="empty-state">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: #ccc;">
+                account_balance_wallet
+            </span>
+            <h3>Your Vault is Empty</h3>
+            <p>Ready to save? Make your first deposit above to start tracking your wealth.</p>
+        </div>
+    `;
     }
     else{
         // Wipe the list and rebuild it from the Array

@@ -75,3 +75,17 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
 .toast.show{
   opacity: 1;
 }
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f9f9f9;
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    color: #666;
+}
+
+.empty-state h3 {
+    margin: 10px 0 5px;
+    color: #333;
+}
