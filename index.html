@@ -27,13 +27,15 @@
         <h1>My latest balance: <span id="balance-display">$0</span></h1>
         
         <div class="controls" id="controls">
-            <input type="number" id="amount-input" placeholder="Enter amount">
-            <button id="deposit-btn">Deposit</button>
-            <button id="withdraw-btn">Withdraw</button>
-            <button id="clear-all-btn">Clear all</button>
+            <input type="number" id="amount-input" placeholder="Enter amount" aria-label="input-amount">
+            <div class="buttons-group" id="buttons-group">
+              <button id="deposit-btn" aria-label="deposit button">Deposit</button>
+              <button id="withdraw-btn" aria-label="withdraw button">Withdraw</button>
+              <button id="clear-all-btn" aria-label="clear all button">Clear all</button>
+            </div>
         </div>
         <h3>Search and filter</h3>
-        <input type="text" id="search-input" placeholder="Enter search keyword">
+        <input type="text" id="search-input" placeholder="Enter search keyword" arial-label="Enter search keyword">
 
         <h3>Deposits and Withdrawals</h3>
         <span id="total-deposit"></span>

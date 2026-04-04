@@ -75,8 +75,11 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
         
         transactionArr.forEach((transaction) => {
             const newItem = document.createElement('li');
-            newItem.innerText = `${transaction.type === 'deposit' ? '+' : '-'}${formatter.format(transaction.amount)} `;
-            newItem.classList.add(transaction.type === 'deposit' ? 'deposit-item' : 'withdraw-item');
+            newItem.className = "transaction-row";
+            const newTransactionText = document.createElement('span');
+
+            newTransactionText.innerText = `${transaction.type === 'deposit' ? '+' : '-'}${formatter.format(transaction.amount)} `;
+            newTransactionText.classList.add(transaction.type === 'deposit' ? 'deposit-item' : 'withdraw-item');
             
             //create delete button with X text and add to li element
             const deleteBtn = document.createElement('button');
@@ -84,6 +87,7 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
             deleteBtn.id = "delete-btn";
 
             deleteBtn.setAttribute('data-id', transaction.id);
+            newItem.appendChild(newTransactionText)
             newItem.appendChild(deleteBtn);
             selectors.transactionList.appendChild(newItem);
         }); 

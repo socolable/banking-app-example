@@ -89,3 +89,50 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
     margin: 10px 0 5px;
     color: #333;
 }
+
+@media (max-width: 600px) {
+  .container {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .buttons-group {
+    display: flex;
+    flex-direction: column; /* Simplified: just stack them */
+    gap: 8px; /* Slightly larger gap for easier tapping */
+  }
+  
+  /* Global mobile button style */
+  button {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Specific override for the delete icon button */
+  #transaction-list button {
+    width: 44px; /* Standard accessible touch size */
+    height: 44px;
+    flex-shrink: 0; /* Prevents the button from turning into an oval */
+    padding: 0;
+  }
+
+  .transaction-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px; /* Space between text and delete button */
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .deposit-item, .withdraw-item {
+    font-size: 0.9rem;
+    flex-grow: 1; /* Pushes the delete button to the far right */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

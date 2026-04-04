@@ -29,8 +29,6 @@ export async function getExchangeRate(fromCurr, toCurr){
         showToast("Problem fetching rates. Using fallback rates.");
         
         const pairKey = `${fromCurrency}-${toCurrency}`;
-        console.log("What is this:");
-        console.log(FALLBACK_RATES[pairKey]);
         return FALLBACK_RATES[pairKey] || 1;
      }   
 }
