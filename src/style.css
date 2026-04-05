@@ -1,44 +1,140 @@
-body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f4; }
-.container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; }
+:root {
+  --bg-color: #f4f4f4;
+  --container-bg: white;
+  --text-color: #333;
+  --border-color: #eee;
+  --input-bg: #fff;
+}
 
-button { padding: 10px; cursor: pointer; border: none; border-radius: 4px; color: white; margin-top: 10px; }
+body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --container-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --border-color: #333;
+  --input-bg: #2d2d2d;
+}
+
+.container {
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+
+  background: var(--container-bg);
+  color: var(--text-color);
+}
+
+button {
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  margin-top: 10px;
+}
+
+#theme-toggle {
+  background: #666;
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-#deposit-btn { background: #28a745;}
-#withdraw-btn { background: #dc3545; }
-#clear-all-btn {background: blue;}
-#delete-btn {background: black;}
-#retry-btn {background:blue}
+#deposit-btn {
+  background: #28a745;
+}
 
-input { width: 93%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; }
-ul { list-style: none; padding: 0; }
-li { padding: 8px; border-bottom: 1px solid #eee; }
-.deposit-item { color: green; }
-.withdraw-item { color: red; }
+#withdraw-btn {
+  background: #dc3545;
+}
+
+#clear-all-btn {
+  background: blue;
+}
+
+#retry-btn {
+  background: blue;
+}
+
+.delete-btn {
+  background: black;
+}
+
+input {
+  width: 93%;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  background: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.deposit-item {
+  color: rgb(6, 133, 6);
+}
+
+.withdraw-item {
+  color: red;
+}
+
+body.dark-mode .deposit-item {
+  color: rgb(0, 255, 0);
+}
+
+body.dark-mode .withdraw-item {
+  color: rgb(255, 152, 152);
+}
 
 .loader {
-  border: 8px solid #f3f3f3; /* Light grey border */
-  border-top: 8px solid #3498db; /* Blue border on top */
+  border: 8px solid #f3f3f3;
+  /* Light grey border */
+  border-top: 8px solid #3498db;
+  /* Blue border on top */
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  animation: spin 1s linear infinite; /* Animation effect */
+  animation: spin 1s linear infinite;
+  /* Animation effect */
   /* Centering the spinner */
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -20px; /* Half of height */
-  margin-left: -20px; /* Half of width */
+  margin-top: -20px;
+  /* Half of height */
+  margin-left: -20px;
+  /* Half of width */
 }
 
-.spinner{
+.spinner {
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top: 2px solid #ffffff;
   border-radius: 50%;
-  width: 14px; /* Tiny! */
+  width: 14px;
+  /* Tiny! */
   height: 14px;
   animation: spin 0.8s linear infinite;
   margin-right: 8px;
@@ -47,23 +143,26 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-
-#toast-container{
-
+#toast-container {
   position: fixed;
   top: 40px;
   right: 40px;
   z-index: 999;
 }
 
-.toast{
+.toast {
   border: 2px solid black;
   background-color: lightgreen;
-  
+
   width: 200px;
   height: 64px;
 
@@ -72,22 +171,23 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
   opacity: 0;
 }
 
-.toast.show{
+.toast.show {
   opacity: 1;
 }
 
 .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    background: #f9f9f9;
-    border: 2px dashed #ddd;
-    border-radius: 12px;
-    color: #666;
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 12px;
+
+  background: var(--bg-color);
+  border: 2px dashed var(--border-color);
+  color: var(--text-color)
 }
 
 .empty-state h3 {
-    margin: 10px 0 5px;
-    color: #333;
+  margin: 10px 0 5px;
+  color: var(--text-color);
 }
 
 @media (max-width: 600px) {
@@ -95,13 +195,15 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
     width: 95%;
     padding: 15px;
   }
-  
+
   .buttons-group {
     display: flex;
-    flex-direction: column; /* Simplified: just stack them */
-    gap: 8px; /* Slightly larger gap for easier tapping */
+    flex-direction: column;
+    /* Simplified: just stack them */
+    gap: 8px;
+    /* Slightly larger gap for easier tapping */
   }
-  
+
   /* Global mobile button style */
   button {
     width: 100%;
@@ -113,9 +215,11 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
 
   /* Specific override for the delete icon button */
   #transaction-list button {
-    width: 44px; /* Standard accessible touch size */
+    width: 44px;
+    /* Standard accessible touch size */
     height: 44px;
-    flex-shrink: 0; /* Prevents the button from turning into an oval */
+    flex-shrink: 0;
+    /* Prevents the button from turning into an oval */
     padding: 0;
   }
 
@@ -123,14 +227,17 @@ li { padding: 8px; border-bottom: 1px solid #eee; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px; /* Space between text and delete button */
+    gap: 10px;
+    /* Space between text and delete button */
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
   }
 
-  .deposit-item, .withdraw-item {
+  .deposit-item,
+  .withdraw-item {
     font-size: 0.9rem;
-    flex-grow: 1; /* Pushes the delete button to the far right */
+    flex-grow: 1;
+    /* Pushes the delete button to the far right */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -84,7 +84,7 @@ export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate
             //create delete button with X text and add to li element
             const deleteBtn = document.createElement('button');
             deleteBtn.innerText = "X";
-            deleteBtn.id = "delete-btn";
+            deleteBtn.classList.add('delete-btn');
 
             deleteBtn.setAttribute('data-id', transaction.id);
             newItem.appendChild(newTransactionText)

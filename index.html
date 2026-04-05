@@ -4,45 +4,74 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Your banking app pro</title>
 
-    <meta name="description" content="Securely track your deposits and withdrawals with real-time exchange rates.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://banking-app-pro-example.netlify.app/">
-    <meta property="og:title" content="BankSafe - Your personal banking app">
-    <meta property="og:description" content="Manage your money with precision. Now with offline mode and real-time EUR/GBP rates.">
-    <meta property="og:image" content="/preview-image.png"> <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BankSafe">
+    <meta
+      name="description"
+      content="Securely track your deposits and withdrawals with real-time exchange rates."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://banking-app-pro-example.netlify.app/"
+    />
+    <meta property="og:title" content="BankSafe - Your personal banking app" />
+    <meta
+      property="og:description"
+      content="Manage your money with precision. Now with offline mode and real-time EUR/GBP rates."
+    />
+    <meta property="og:image" content="/preview-image.png" />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="BankSafe" />
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
 
     <div class="container">
-        <div id="toast-container"></div>
-        <h1>My latest balance: <span id="balance-display">$0</span></h1>
-        
-        <div class="controls" id="controls">
-            <input type="number" id="amount-input" placeholder="Enter amount" aria-label="input-amount">
-            <div class="buttons-group" id="buttons-group">
-              <button id="deposit-btn" aria-label="deposit button">Deposit</button>
-              <button id="withdraw-btn" aria-label="withdraw button">Withdraw</button>
-              <button id="clear-all-btn" aria-label="clear all button">Clear all</button>
-            </div>
+      <div id="toast-container"></div>
+      <button id="theme-toggle" class="secondary-btn">🌙 Dark Mode</button>
+
+      <h1>My latest balance: <span id="balance-display">$0</span></h1>
+
+      <div class="controls" id="controls">
+        <input
+          type="number"
+          id="amount-input"
+          placeholder="Enter amount"
+          aria-label="input-amount"
+        />
+        <div class="buttons-group" id="buttons-group">
+          <button id="deposit-btn" aria-label="deposit button">Deposit</button>
+          <button id="withdraw-btn" aria-label="withdraw button">
+            Withdraw
+          </button>
+          <button id="clear-all-btn" aria-label="clear all button">
+            Clear all
+          </button>
         </div>
-        <h3>Search and filter</h3>
-        <input type="text" id="search-input" placeholder="Enter search keyword" arial-label="Enter search keyword">
+      </div>
+      <h3>Search and filter</h3>
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Enter search keyword"
+        arial-label="Enter search keyword"
+      />
 
-        <h3>Deposits and Withdrawals</h3>
-        <span id="total-deposit"></span>
-        <span id="total-withdraw"></span>
+      <h3>Deposits and Withdrawals</h3>
+      <span id="total-deposit"></span>
+      <span id="total-withdraw"></span>
 
-        <h3>Transaction History</h3>
-        <ul id="transaction-list"></ul>
+      <h3>Transaction History</h3>
+      <ul id="transaction-list"></ul>
     </div>
   </body>
 </html>
