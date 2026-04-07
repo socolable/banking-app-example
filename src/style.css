@@ -150,6 +150,16 @@ body.dark-mode .withdraw-item {
   display: inline-block;
 }
 
+.transaction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  /* Space between text and delete button */
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -230,27 +240,18 @@ body.dark-mode .withdraw-item {
     /* Prevents the button from turning into an oval */
     padding: 0;
   }
-
-  .transaction-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    /* Space between text and delete button */
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .deposit-item,
-  .withdraw-item {
-    font-size: 0.9rem;
-    flex-grow: 1;
-    /* Pushes the delete button to the far right */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }
+
+.deposit-item,
+.withdraw-item {
+  font-size: 0.9rem;
+  flex-grow: 1;
+  /* Pushes the delete button to the far right */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 
 dialog {
   position: fixed;
