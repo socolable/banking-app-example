@@ -1,125 +1,169 @@
-const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
 });
 
-const toastContainer = document.querySelector('#toast-container');
+const toastContainer = document.querySelector("#toast-container");
 
-const toast = document.createElement('div');
-toast.classList.add('toast');
-toast.textContent = 'Successfully deposit! Hoora!';
+const toast = document.createElement("div");
+toast.classList.add("toast");
+toast.textContent = "Successfully deposit! Hoora!";
 
 toastContainer.appendChild(toast);
 
+export function showLoading(selectors) {
+  selectors.transactionList.textContent = "";
 
-export function showLoading(selectors){
-    selectors.transactionList.innerHTML = "";
-    selectors.transactionList.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
-            <div class="loader"></div>
-            <p style="margin-top: 10px;">Securely accessing vault...</p>
-        </div>`;
+  const loadingContainer = document.createElement("div");
+  loadingContainer.style.display = "flex";
+  loadingContainer.style.flexDirection = "column";
+  loadingContainer.style.alignItems = "center";
+  loadingContainer.style.padding = "20px";
+
+  const loader = document.createElement("div");
+  loader.classList.add("loader");
+
+  const loadingTextMessage = document.createElement("p");
+  loadingTextMessage.textContent = "Accessing vault...";
+  loadingTextMessage.style.marginTop = "8px";
+
+  loadingContainer.appendChild(loader);
+  loadingContainer.appendChild(loadingTextMessage);
+
+  selectors.transactionList.appendChild(loadingContainer);
 }
 
-export function showToast(message = "Success!"){
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => {toast.classList.remove('show')}, 3000);
+export function showToast(message = "Success!") {
+  toast.textContent = message;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
 }
 
-export function setLoading(isLoading, selectors){
-    (isLoading === true) ? showSpinner(selectors) : hideSpinner(selectors);
+export function setLoading(isLoading, selectors) {
+  isLoading === true ? showSpinner(selectors) : hideSpinner(selectors);
 }
 
-function showSpinner(selectors){
-    selectors.depositBtn.disabled = true;
-    selectors.withdrawBtn.disabled = true;
+function showSpinner(selectors) {
+  selectors.depositBtn.disabled = true;
+  selectors.withdrawBtn.disabled = true;
 
-    selectors.depositBtn.innerHTML = `<span class="spinner"></span> Wait...`;
-    selectors.withdrawBtn.innerHTML = `<span class="spinner"></span> Wait...`;
+  const spinner1 = document.createElement("span");
+  const spinner2 = document.createElement("span");
+  spinner1.classList.add("spinner");
+  spinner2.classList.add("spinner");
+
+  selectors.depositBtn.textContent = "Wait...";
+  selectors.withdrawBtn.textContent = "Wait...";
+
+  selectors.depositBtn.prepend(spinner1);
+  selectors.withdrawBtn.prepend(spinner2);
 }
 
-function hideSpinner(selectors){
-    selectors.depositBtn.disabled = false;
-    selectors.withdrawBtn.disabled = false;
+function hideSpinner(selectors) {
+  selectors.depositBtn.disabled = false;
+  selectors.withdrawBtn.disabled = false;
 
-    selectors.depositBtn.innerHTML = `Deposit`;
-    selectors.withdrawBtn.innerHTML = `Withdraw`;
+  selectors.depositBtn.textContent = `Deposit`;
+  selectors.withdrawBtn.textContent = `Withdraw`;
 }
 
-export function renderUI(currentBalance, transactionArr, selectors, usdToEurRate, usdToGBPRate) {
-    const formattedUSDBalance = formatter.format(currentBalance);
-    const euroBalance = usdToEurRate*currentBalance;    
-    const gbpBalance = usdToGBPRate*currentBalance;
+export function renderUI(
+  currentBalance,
+  transactionArr,
+  selectors,
+  usdToEurRate,
+  usdToGBPRate,
+) {
+  const formattedUSDBalance = formatter.format(currentBalance);
+  const euroBalance = usdToEurRate * currentBalance;
+  const gbpBalance = usdToGBPRate * currentBalance;
 
-    const formattedEuro = usdToEurRate ? `${euroBalance.toLocaleString('de-DE', {style: 'currency', currency: 'EUR'})}` : "€ rate not available";
-    const formattedGBP = usdToGBPRate ? `${gbpBalance.toLocaleString('en-GB', {style: 'currency', currency: 'GBP'})}` : "GBP rate not available";
-    
-    selectors.balanceDisplay.innerText = `${formattedUSDBalance} | ${formattedEuro} | ${formattedGBP}`;
-        
+  const formattedEuro = usdToEurRate
+    ? `${euroBalance.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}`
+    : "€ rate not available";
+  const formattedGBP = usdToGBPRate
+    ? `${gbpBalance.toLocaleString("en-GB", { style: "currency", currency: "GBP" })}`
+    : "GBP rate not available";
 
-    if(transactionArr.length === 0){
-        selectors.transactionList.innerHTML = `
-        <div class="empty-state">
-            <span class="material-symbols-outlined" style="font-size: 48px; color: #ccc;">
-                account_balance_wallet
-            </span>
-            <h3>Your Vault is Empty</h3>
-            <p>Ready to save? Make your first deposit above to start tracking your wealth.</p>
-        </div>
-    `;
-    }
-    else{
-        // Wipe the list and rebuild it from the Array
-        selectors.transactionList.innerHTML = "";
-        
-        transactionArr.forEach((transaction) => {
-            const newItem = document.createElement('li');
-            newItem.className = "transaction-row";
-            const newTransactionText = document.createElement('span');
+  selectors.balanceDisplay.textContent = `${formattedUSDBalance} | ${formattedEuro} | ${formattedGBP}`;
 
-            newTransactionText.innerText = `${transaction.type === 'deposit' ? '+' : '-'}${formatter.format(transaction.amount)} `;
-            newTransactionText.classList.add(transaction.type === 'deposit' ? 'deposit-item' : 'withdraw-item');
-            
-            //create delete button with X text and add to li element
-            const deleteBtn = document.createElement('button');
-            deleteBtn.innerText = "X";
-            deleteBtn.classList.add('delete-btn');
+  if (transactionArr.length === 0) {
+    selectors.transactionList.textContent = "";
+    const emptyStateDiv = document.createElement("div");
+    emptyStateDiv.classList.add("empty-state");
 
-            deleteBtn.setAttribute('data-id', transaction.id);
-            newItem.appendChild(newTransactionText)
-            newItem.appendChild(deleteBtn);
-            selectors.transactionList.appendChild(newItem);
-        }); 
-        
-        displayTotals(transactionArr, selectors); 
+    const symbol = document.createElement("span");
+    symbol.classList.add("material-symbols-outlined");
+    Object.assign(symbol.style, { fontSize: "48px", color: "#ccc" });
+    symbol.textContent = "account_balance_wallet";
 
-        // Clear the input box
-        selectors.amountInput.value = '';
-    }
-    
+    const headline = document.createElement("h2");
+    headline.textContent = "Your vault is empty.";
+
+    const textMessage = document.createElement("p");
+    textMessage.textContent =
+      "Ready to save? Make your first deposit above to start tracking your wealth.";
+
+    emptyStateDiv.append(symbol, headline, textMessage);
+    selectors.transactionList.appendChild(emptyStateDiv);
+
+    displayTotals([], selectors);
+  } else {
+    // Wipe the list and rebuild it from the Array
+    selectors.transactionList.textContent = "";
+
+    transactionArr.forEach((transaction) => {
+      const newItem = document.createElement("li");
+      newItem.className = "transaction-row";
+      const newTransactionText = document.createElement("span");
+
+      newTransactionText.textContent = `${transaction.type === "deposit" ? "+" : "-"}${formatter.format(transaction.amount)} `;
+      newTransactionText.classList.add(
+        transaction.type === "deposit" ? "deposit-item" : "withdraw-item",
+      );
+
+      //create delete button with X text and add to li element
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "X";
+      deleteBtn.classList.add("delete-btn");
+
+      deleteBtn.setAttribute("data-id", transaction.id);
+      newItem.appendChild(newTransactionText);
+      newItem.appendChild(deleteBtn);
+      selectors.transactionList.appendChild(newItem);
+    });
+
+    // Clear the input box
+    selectors.amountInput.value = "";
+  }
+  displayTotals(transactionArr, selectors);
 }
 
-export function displayTotals(transactionArr, selectors){
-    const totalDeposits = transactionArr
-    .filter(transaction => transaction.type ==='deposit')
-    .reduce((sum, transaction) => sum+transaction.amount,0);
-    
-    const totalWithdraws = transactionArr
-    .filter(transaction => transaction.type ==='withdraw')
-    .reduce((sum, transaction) => sum+transaction.amount,0);
+export function displayTotals(transactionArr, selectors) {
+  const data = transactionArr || [];
 
-    selectors.totalDepositDisplay.innerText = `Total Deposit: ${formatter.format(totalDeposits)}`;
-    selectors.totalWithdrawDisplay.innerText = `Total Withdraw: ${formatter.format(totalWithdraws)}`;
+  const totalDeposits = data
+    .filter((transaction) => transaction.type === "deposit")
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  const totalWithdraws = data
+    .filter((transaction) => transaction.type === "withdraw")
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  selectors.totalDepositDisplay.textContent = `Total Deposit: ${formatter.format(totalDeposits)}`;
+  selectors.totalWithdrawDisplay.textContent = `Total Withdraw: ${formatter.format(totalWithdraws)}`;
 }
 
+export function showError(selectors, error) {
+  selectors.transactionList.textContent = `Error: ${error}. Please try again.`;
+  const retryBtn = document.createElement("button");
+  retryBtn.textContent = "Retry";
+  retryBtn.id = "retry-btn";
+  selectors.transactionList.appendChild(retryBtn);
 
-export function showError(selectors, error){
-    selectors.transactionList.innerHTML = `Error: ${error}. Please try again.`;
-    const retryBtn = document.createElement('button');
-    retryBtn.innerText = "Retry";
-    retryBtn.id = "retry-btn";
-    selectors.transactionList.appendChild(retryBtn);
-
-    retryBtn.addEventListener('click', () => {window.location.reload()});
+  retryBtn.addEventListener("click", () => {
+    window.location.reload();
+  });
 }

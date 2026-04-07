@@ -85,7 +85,19 @@ function getBalance() {
 
 function updateApp(dataToShow = state.history) {
   const currentBalance = getBalance();
-  saveToVault(currentBalance, state.history);
+  try {
+    saveToVault(currentBalance, state.history);
+  } catch (e) {
+    console.log("4. Catch block reached in main.js. Error message:", e.message);
+
+    // We check if the message contains our keyword
+    if (e.message.includes("QUOTA_FULL")) {
+      openModal("Vault is full! Please clear some history.", () => {
+        console.log("User closed modal");
+      });
+    }
+  }
+
   renderUI(
     currentBalance,
     dataToShow,
@@ -93,6 +105,16 @@ function updateApp(dataToShow = state.history) {
     state.usdToEurRate,
     state.usdToGBPRate,
   );
+}
+
+function debounce(func, delay = 300) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
 }
 
 // --- 5. EVENT LISTENERS ---
@@ -156,13 +178,20 @@ withdrawBtn.addEventListener("click", (e) => {
   }, 600);
 });
 
-function openModal(message, onConfirm) {
+export function openModal(message, onConfirm) {
   const dialog = document.querySelector("#confirmation-modal");
   const modalMessage = document.querySelector("#modal-text");
   const confirmBtn = document.querySelector("#modal-confirm");
   const cancelBtn = document.querySelector("#modal-cancel");
 
+  dialog.close();
   modalMessage.textContent = message;
+
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  const newCancelBtn = cancelBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+  cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
   dialog.showModal();
 
   const handleConfirm = () => {
@@ -170,17 +199,17 @@ function openModal(message, onConfirm) {
     dialog.close();
   };
 
-  confirmBtn.addEventListener("click", handleConfirm, { once: true });
+  newConfirmBtn.addEventListener("click", handleConfirm, { once: true });
 
   dialog.addEventListener(
     "close",
     () => {
-      confirmBtn.removeEventListener("click", handleConfirm);
+      newConfirmBtn.removeEventListener("click", handleConfirm);
     },
     { once: true },
   );
 
-  cancelBtn.addEventListener(
+  newCancelBtn.addEventListener(
     "click",
     () => {
       dialog.close();
@@ -196,17 +225,19 @@ clearAllBtn.addEventListener("click", () => {
   });
 });
 
-searchInput.addEventListener("input", () => {
-  if (searchInput.value.length === 0) {
+const handleSearch = debounce(() => {
+  const searchTerm = searchInput.value;
+  if (searchTerm.length === 0) {
     updateApp();
     return;
   }
-
   const filteredTransactions = state.history.filter((transaction) =>
     String(transaction.amount).includes(searchInput.value),
   );
   updateApp(filteredTransactions);
-});
+}, 300);
+
+searchInput.addEventListener("input", handleSearch);
 
 transactionList.addEventListener("click", (e) => {
   const btn = e.target.closest(".delete-btn");
