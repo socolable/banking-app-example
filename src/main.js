@@ -156,11 +156,44 @@ withdrawBtn.addEventListener("click", (e) => {
   }, 600);
 });
 
+function openModal(message, onConfirm) {
+  const dialog = document.querySelector("#confirmation-modal");
+  const modalMessage = document.querySelector("#modal-text");
+  const confirmBtn = document.querySelector("#modal-confirm");
+  const cancelBtn = document.querySelector("#modal-cancel");
+
+  modalMessage.textContent = message;
+  dialog.showModal();
+
+  const handleConfirm = () => {
+    onConfirm();
+    dialog.close();
+  };
+
+  confirmBtn.addEventListener("click", handleConfirm, { once: true });
+
+  dialog.addEventListener(
+    "close",
+    () => {
+      confirmBtn.removeEventListener("click", handleConfirm);
+    },
+    { once: true },
+  );
+
+  cancelBtn.addEventListener(
+    "click",
+    () => {
+      dialog.close();
+    },
+    { once: true },
+  );
+}
+
 clearAllBtn.addEventListener("click", () => {
-  if (window.confirm("Clear all?")) {
+  openModal("Clear all now?", () => {
     state.history.splice(0, state.history.length);
     updateApp();
-  }
+  });
 });
 
 searchInput.addEventListener("input", () => {
@@ -176,8 +209,9 @@ searchInput.addEventListener("input", () => {
 });
 
 transactionList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delete-btn")) {
-    const idToDelete = Number(e.target.getAttribute("data-id"));
+  const btn = e.target.closest(".delete-btn");
+  if (btn) {
+    const idToDelete = Number(btn.getAttribute("data-id"));
 
     const itemToDelete = state.history.find(
       (transaction) => transaction.id === idToDelete,
@@ -185,6 +219,7 @@ transactionList.addEventListener("click", (e) => {
 
     // If cannot find the itemToDelete for some reason, stop
     if (!itemToDelete) return;
+
     state.history = state.history.filter(
       (transaction) => transaction.id !== idToDelete,
     );

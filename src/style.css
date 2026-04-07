@@ -73,6 +73,14 @@ button:disabled {
   background: black;
 }
 
+#modal-confirm {
+  background-color: #28a745;
+}
+
+#modal-cancel {
+  background-color: #dc3545;
+}
+
 input {
   width: 93%;
   padding: 10px;
@@ -242,4 +250,24 @@ body.dark-mode .withdraw-item {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
+
+dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: var(--container-bg);
+  color: var(--text-color);
+  border: none;
+  padding: 32px;
+  padding-top: 0px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
 }
