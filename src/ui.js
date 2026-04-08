@@ -1,7 +1,6 @@
-const formatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { APP_CONFIG } from "./config.js";
+import { displayTotals } from "./finance.js";
+import { formatNumber } from "./util.js";
 
 const toastContainer = document.querySelector("#toast-container");
 
@@ -38,7 +37,7 @@ export function showToast(message = "Success!") {
   toast.classList.add("show");
   setTimeout(() => {
     toast.classList.remove("show");
-  }, 3000);
+  }, APP_CONFIG.TOAST_DURATION_MS);
 }
 
 export function setLoading(isLoading, selectors) {
@@ -76,7 +75,7 @@ export function renderUI(
   usdToEurRate,
   usdToGBPRate,
 ) {
-  const formattedUSDBalance = formatter.format(currentBalance);
+  const formattedUSDBalance = formatNumber(currentBalance);
   const euroBalance = usdToEurRate * currentBalance;
   const gbpBalance = usdToGBPRate * currentBalance;
 
@@ -119,7 +118,7 @@ export function renderUI(
       newItem.className = "transaction-row";
       const newTransactionText = document.createElement("span");
 
-      newTransactionText.textContent = `${transaction.type === "deposit" ? "+" : "-"}${formatter.format(transaction.amount)} `;
+      newTransactionText.textContent = `${transaction.type === "deposit" ? "+" : "-"}${formatNumber(transaction.amount)} `;
       newTransactionText.classList.add(
         transaction.type === "deposit" ? "deposit-item" : "withdraw-item",
       );
@@ -139,21 +138,6 @@ export function renderUI(
     selectors.amountInput.value = "";
   }
   displayTotals(transactionArr, selectors);
-}
-
-export function displayTotals(transactionArr, selectors) {
-  const data = transactionArr || [];
-
-  const totalDeposits = data
-    .filter((transaction) => transaction.type === "deposit")
-    .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-  const totalWithdraws = data
-    .filter((transaction) => transaction.type === "withdraw")
-    .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-  selectors.totalDepositDisplay.textContent = `Total Deposit: ${formatter.format(totalDeposits)}`;
-  selectors.totalWithdrawDisplay.textContent = `Total Withdraw: ${formatter.format(totalWithdraws)}`;
 }
 
 export function showError(selectors, error) {

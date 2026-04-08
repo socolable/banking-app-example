@@ -1,34 +1,30 @@
-import { showToast } from "./ui";
+import { APP_CONFIG } from "./config.js";
+import { showToast } from "./ui.js";
 
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = APP_CONFIG.API_BASE_URL;
 
-export async function getExchangeRate(fromCurr, toCurr){
-    
-    const fromCurrency = fromCurr.toLowerCase();
-    const toCurrency = toCurr.toLowerCase();
+export async function getExchangeRate(fromCurr, toCurr) {
+  const fromCurrency = fromCurr.toLowerCase();
+  const toCurrency = toCurr.toLowerCase();
 
-    const url = `${baseURL}/${fromCurrency}.json`;
+  const url = `${baseURL}/${fromCurrency}.json`;
 
-    const FALLBACK_RATES = {
-        "usd-eur": 1.0869,
-        "usd-gbp": 1.3157
-    };
-   
-    try{
-        const response = await fetch(url);
-        if(!response.ok){
-            throw new Error(`Error: ${response.status}`);
-        }
-        
-        const data = await response.json();        
-        return data[fromCurrency][toCurrency];
+  const FALLBACK_RATES = APP_CONFIG.FALLBACK_EXCHANGE_RATES;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
     }
-     catch(e){
-        console.error("Error: ", e);
-        
-        showToast("Problem fetching rates. Using fallback rates.");
-        
-        const pairKey = `${fromCurrency}-${toCurrency}`;
-        return FALLBACK_RATES[pairKey] || 1;
-     }   
+
+    const data = await response.json();
+    return data[fromCurrency][toCurrency];
+  } catch (e) {
+    console.error("Error: ", e);
+
+    showToast("Problem fetching rates. Using fallback rates.");
+
+    const pairKey = `${fromCurrency}-${toCurrency}`;
+    return FALLBACK_RATES[pairKey] || 1;
+  }
 }

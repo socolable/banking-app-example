@@ -1,14 +1,10 @@
+import { APP_CONFIG } from "./config";
+
 export function saveToVault(currentBalance, transactionHistory) {
-  console.log("1. Entering saveToVault...");
   try {
     localStorage.setItem("totalBalance", currentBalance);
     localStorage.setItem("history", JSON.stringify(transactionHistory));
-    console.log("2. Save successful (no error thrown by browser)");
   } catch (error) {
-    // This MUST run if localStorage is full
-    console.log("3. BROWSER ERROR DETECTED:", error.name);
-
-    // We throw a brand new error to simplify things for main.js
     throw new Error("QUOTA_FULL");
   }
 }
@@ -34,7 +30,7 @@ export function loadFromVault() {
       } else {
         reject("Vault connection timeout!");
       }
-    }, 2000);
+    }, APP_CONFIG.VAULT_CONNECTION_TIMEOUT_MS);
   });
 
   return promise;

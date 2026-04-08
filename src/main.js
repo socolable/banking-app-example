@@ -9,6 +9,9 @@ import {
 } from "./ui.js";
 import { loadFromVault, saveToVault } from "./storage.js";
 import { getExchangeRate } from "./api.js";
+import { getBalance, filterTransactions } from "./finance.js";
+import { debounce } from "./util.js";
+import { APP_CONFIG, STORAGE_KEYS } from "./config.js";
 
 // --- 1. SELECTORS ---
 const balanceDisplay = document.querySelector("#balance-display");
@@ -43,7 +46,7 @@ const state = {
 };
 
 // THEME CHECK
-const savedTheme = localStorage.getItem("theme");
+const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
 if (savedTheme === "dark") {
   document.body.classList.add("dark-mode");
 }
@@ -75,29 +78,8 @@ async function initApp() {
 }
 initApp();
 
-function getBalance() {
-  return state.history.reduce((accum, transaction) => {
-    return transaction.type === "deposit"
-      ? accum + transaction.amount
-      : accum - transaction.amount;
-  }, 0);
-}
-
 function updateApp(dataToShow = state.history) {
-  const currentBalance = getBalance();
-  try {
-    saveToVault(currentBalance, state.history);
-  } catch (e) {
-    console.log("4. Catch block reached in main.js. Error message:", e.message);
-
-    // We check if the message contains our keyword
-    if (e.message.includes("QUOTA_FULL")) {
-      openModal("Vault is full! Please clear some history.", () => {
-        console.log("User closed modal");
-      });
-    }
-  }
-
+  const currentBalance = getBalance(state.history);
   renderUI(
     currentBalance,
     dataToShow,
@@ -107,22 +89,29 @@ function updateApp(dataToShow = state.history) {
   );
 }
 
-function debounce(func, delay = 300) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
+const handleSearch = debounce(() => {
+  const searchTerm = searchInput.value;
+  const filteredTransactions = filterTransactions(searchTerm, state.history);
+  updateApp(filteredTransactions);
+}, APP_CONFIG.SEARCH_DEBOUNCE_MS);
 
-// --- 5. EVENT LISTENERS ---
+function handleDataChange() {
+  const currentBalance = getBalance(state.history);
+  try {
+    saveToVault(currentBalance, state.history);
+  } catch (e) {
+    if (e.message.includes("QUOTA_FULL")) {
+      openModal("Vault is full! Please clear some history.", () => {});
+    }
+  }
+  updateApp();
+}
+// --- 3. EVENT LISTENERS ---
 
 themeBtn.addEventListener("click", () => {
   const isDark = document.body.classList.toggle("dark-mode");
   themeBtn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
-  localStorage.setItem("theme", isDark ? "dark" : "light");
+  localStorage.setItem(STORAGE_KEYS.THEME, isDark ? "dark" : "light");
 });
 
 depositBtn.addEventListener("click", (e) => {
@@ -141,7 +130,7 @@ depositBtn.addEventListener("click", (e) => {
   state.history.push({ id: Date.now(), amount, type: "deposit" });
 
   showToast();
-  updateApp();
+  handleDataChange();
 
   // enable Deposit button 1 second after clicking
   setTimeout(() => {
@@ -164,11 +153,11 @@ withdrawBtn.addEventListener("click", (e) => {
 
   const amount = Number(rawValue);
 
-  if (amount > getBalance()) {
+  if (amount > getBalance(state.history)) {
     alert("Insufficient funds!");
   } else {
     state.history.push({ id: Date.now(), amount, type: "withdraw" });
-    updateApp();
+    handleDataChange();
   }
 
   // enable Withdraw button 1s after clicking
@@ -197,6 +186,7 @@ export function openModal(message, onConfirm) {
   const handleConfirm = () => {
     onConfirm();
     dialog.close();
+    amountInput.focus();
   };
 
   newConfirmBtn.addEventListener("click", handleConfirm, { once: true });
@@ -221,21 +211,9 @@ export function openModal(message, onConfirm) {
 clearAllBtn.addEventListener("click", () => {
   openModal("Clear all now?", () => {
     state.history.splice(0, state.history.length);
-    updateApp();
+    handleDataChange();
   });
 });
-
-const handleSearch = debounce(() => {
-  const searchTerm = searchInput.value;
-  if (searchTerm.length === 0) {
-    updateApp();
-    return;
-  }
-  const filteredTransactions = state.history.filter((transaction) =>
-    String(transaction.amount).includes(searchInput.value),
-  );
-  updateApp(filteredTransactions);
-}, 300);
 
 searchInput.addEventListener("input", handleSearch);
 
@@ -254,6 +232,20 @@ transactionList.addEventListener("click", (e) => {
     state.history = state.history.filter(
       (transaction) => transaction.id !== idToDelete,
     );
-    updateApp();
+    handleDataChange();
   }
+});
+
+// --- GLOBAL ERROR BOUNDARY ---
+
+// Catches any "Rejected" promises that weren't handled locally.
+// Catches unexpected API failures or network drops.
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("Vault Error (Unhandled):", event.reason);
+
+  showToast("Vault connection interrupted. Please check your network.");
+
+  // If the error happened during the initial load, hide the loader
+  state.isLoading = false;
+  setLoading(state.isLoading, selectors);
 });

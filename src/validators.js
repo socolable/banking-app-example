@@ -1,3 +1,5 @@
+import { APP_CONFIG } from "./config.js";
+
 export function isValid(rawValue) {
   const trimmedValue = rawValue.trim();
   const num = Number(rawValue);
@@ -15,8 +17,11 @@ export function isValid(rawValue) {
   }
 
   // Check that input should have max 2 decimal points
-  if (trimmedValue.includes(".") && trimmedValue.split(".")[1].length > 2) {
-    alert("Please enter maximum 2 decimal digits.");
+  if (
+    trimmedValue.includes(".") &&
+    trimmedValue.split(".")[1].length > APP_CONFIG.DECIMAL_PLACES
+  ) {
+    alert(`Please enter maximum ${APP_CONFIG.DECIMAL_PLACES} decimal digits.`);
     return false;
   }
 
@@ -28,9 +33,9 @@ export function isValid(rawValue) {
   }
 
   // Check if input is unreasonably large (sanity check) - input should not be greater than 10 mil
-  if (num >= 10000000) {
+  if (num >= APP_CONFIG.MAX_TRANSACTION_LIMIT) {
     alert(
-      "Transaction exceeds limit. Please enter an amount below 10 million.",
+      `Transaction exceeds limit. Please enter an amount below ${APP_CONFIG.MAX_TRANSACTION_LIMIT}.`,
     );
     return false;
   }

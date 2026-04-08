@@ -33,7 +33,6 @@
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
 
     <div class="container">
       <div id="toast-container"></div>
@@ -47,16 +46,12 @@
           id="amount-input"
           inputmode="decimal"
           placeholder="Enter amount"
-          aria-label="input-amount"
+          aria-label="Transaction amount in dollars"
         />
         <div class="buttons-group" id="buttons-group">
-          <button id="deposit-btn" aria-label="deposit button">Deposit</button>
-          <button id="withdraw-btn" aria-label="withdraw button">
-            Withdraw
-          </button>
-          <button id="clear-all-btn" aria-label="clear all button">
-            Clear all
-          </button>
+          <button id="deposit-btn">Deposit</button>
+          <button id="withdraw-btn">Withdraw</button>
+          <button id="clear-all-btn">Clear all</button>
         </div>
       </div>
       <h3>Search and filter</h3>
@@ -64,12 +59,12 @@
         type="text"
         id="search-input"
         placeholder="Enter search keyword"
-        arial-label="Enter search keyword"
+        aria-label="Search transaction history"
       />
 
       <h3>Deposits and Withdrawals</h3>
-      <span id="total-deposit"></span>
-      <span id="total-withdraw"></span>
+      <span id="total-deposit" aria-live="polite"></span>
+      <span id="total-withdraw" aria-live="polite"></span>
 
       <h3>Transaction History</h3>
       <ul id="transaction-list"></ul>
@@ -77,11 +72,12 @@
 
     <dialog id="confirmation-modal">
       <div class="modal-content">
-        <h3>Confirmation</h3>
+        <h3 id="modal-title">Confirmation</h3>
         <p id="modal-text">Are you sure you want to clear all?</p>
         <button id="modal-cancel">Cancel</button>
         <button id="modal-confirm">Confirm</button>
       </div>
     </dialog>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>
