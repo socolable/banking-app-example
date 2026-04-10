@@ -6,6 +6,10 @@
   --input-bg: #fff;
 }
 
+#theme-toggle {
+  background: #666;
+}
+
 body {
   font-family: sans-serif;
   display: flex;
@@ -35,18 +39,58 @@ body.dark-mode {
   color: var(--text-color);
 }
 
+.controls {
+  display: flex;
+  flex-direction: column;
+  /* Stack input and button row */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.summary-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.summary-box {
+  padding: 10px;
+  border-radius: 6px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.transaction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 button {
   padding: 10px;
   cursor: pointer;
   border: none;
   border-radius: 4px;
   color: white;
-  margin-top: 10px;
 }
 
-#theme-toggle {
-  background: #666;
+.button-group button {
+  flex: 1;
+  margin-top: 0;
+  min-width: 80px;
 }
+
+
 
 button:disabled {
   cursor: not-allowed;
@@ -71,6 +115,8 @@ button:disabled {
 
 .delete-btn {
   background: black;
+  margin-top: 0;
+  padding: 5px 10px;
 }
 
 #modal-confirm {
@@ -82,9 +128,11 @@ button:disabled {
 }
 
 input {
-  width: 93%;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0;
   padding: 10px;
-  margin-bottom: 10px;
+
 
   background: var(--input-bg);
   color: var(--text-color);
@@ -150,15 +198,7 @@ body.dark-mode .withdraw-item {
   display: inline-block;
 }
 
-.transaction-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  /* Space between text and delete button */
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-color);
-}
+
 
 @keyframes spin {
   0% {

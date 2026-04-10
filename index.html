@@ -63,8 +63,16 @@
       />
 
       <h3>Deposits and Withdrawals</h3>
-      <span id="total-deposit" aria-live="polite"></span>
-      <span id="total-withdraw" aria-live="polite"></span>
+      <div class="summary-container">
+        <div class="summary-box">
+          <strong>Deposits</strong>
+          <span id="total-deposit" aria-live="polite"></span>
+        </div>
+        <div class="summary-box">
+          <strong>Withdrawals</strong>
+          <span id="total-withdraw" aria-live="polite"></span>
+        </div>
+      </div>
 
       <h3>Transaction History</h3>
       <ul id="transaction-list"></ul>

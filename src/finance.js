@@ -27,6 +27,6 @@ export function displayTotals(transactionArr, selectors) {
     .filter((transaction) => transaction.type === "withdraw")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
-  selectors.totalDepositDisplay.textContent = `Total Deposit: ${formatNumber(totalDeposits)}`;
-  selectors.totalWithdrawDisplay.textContent = `Total Withdraw: ${formatNumber(totalWithdraws)}`;
+  selectors.totalDepositDisplay.textContent = formatNumber(totalDeposits);
+  selectors.totalWithdrawDisplay.textContent = formatNumber(totalWithdraws);
 }
