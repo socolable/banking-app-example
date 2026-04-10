@@ -3,7 +3,6 @@ import { isValid } from "./validators.js";
 import {
   renderUI,
   showLoading,
-  showError,
   setLoading,
   showToast,
   applyTheme,
@@ -58,8 +57,12 @@ async function initApp() {
         console.warn("Vault timed out, but we are keeping the app alive.");
         return { history: [], error: true }; // Flag that the load failed
       }),
-      getExchangeRate("USD", "EUR").catch(() => 1), // Default to 1, not 0
-      getExchangeRate("USD", "GBP").catch(() => 1),
+      getExchangeRate("USD", "EUR").catch(
+        () => FALLBACK_EXCHANGE_RATES.usdToEurRate,
+      ),
+      getExchangeRate("USD", "GBP").catch(
+        () => FALLBACK_EXCHANGE_RATES.usdToGBPRate,
+      ),
     ]);
 
     console.log("2. Data Received:", savedData);
@@ -70,7 +73,6 @@ async function initApp() {
     console.log("3. Data Actions Dispatched");
   } catch (e) {
     console.error("CRITICAL INIT ERROR:", e);
-    //showError(selectors, e);
     updateState("SET_ERROR", true);
   } finally {
     console.log("4. Turning off loader...");

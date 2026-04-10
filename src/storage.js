@@ -11,7 +11,7 @@ export function saveToVault(currentBalance, transactionHistory) {
 
 export function loadFromVault() {
   console.log("Attemp to connect to vault...");
-  const failureChance = Math.random();
+  const failureChance = 0.99;
 
   let promise = new Promise((resolve, reject) => {
     setTimeout(() => {

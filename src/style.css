@@ -56,6 +56,10 @@ body.dark-mode {
 }
 
 .summary-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
   padding: 10px;
   border-radius: 6px;
   background: var(--bg-color);
@@ -198,7 +202,9 @@ body.dark-mode .withdraw-item {
   display: inline-block;
 }
 
-
+.empty-state {
+  background-color: var(--bg-color);
+}
 
 @keyframes spin {
   0% {

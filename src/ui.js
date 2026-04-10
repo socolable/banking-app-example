@@ -94,16 +94,8 @@ export function renderUI(
   vaultError,
 ) {
   if (vaultError) {
-    console.log("Vault error reaches");
-    selectors.transactionList.innerHTML = `
-      <div class="error-state">
-        <span class="material-symbols-outlined">cloud_off</span>
-        <p>Vault connection is weak. Your history couldn't be loaded.</p>
-        <button onclick="window.location.reload()" id="retry-btn">Retry Connection</button>
-      </div>
-    `;
-    selectors.totalDepositDisplay.textContent = "---";
-    selectors.totalWithdrawDisplay.textContent = "---";
+    console.log("Vault error encountered.");
+    displayVaultError(selectors);
     return;
   }
 
@@ -126,7 +118,7 @@ export function renderUI(
 
   selectors.transactionList.textContent = "";
   if (transactionArr.length === 0) {
-    const emptyStateDisplay = createEmptyState();
+    const emptyStateDisplay = displayEmptyState();
     selectors.transactionList.appendChild(emptyStateDisplay);
   } else {
     transactionArr.forEach((transaction) => {
@@ -137,18 +129,6 @@ export function renderUI(
     // Clear the input box
     selectors.amountInput.value = "";
   }
-}
-
-export function showError(selectors, error) {
-  selectors.transactionList.textContent = `Error: ${error}. Please try again.`;
-  const retryBtn = document.createElement("button");
-  retryBtn.textContent = "Retry";
-  retryBtn.id = "retry-btn";
-  selectors.transactionList.appendChild(retryBtn);
-
-  retryBtn.addEventListener("click", () => {
-    window.location.reload();
-  });
 }
 
 function createTransactionRow(transaction) {
@@ -173,7 +153,7 @@ function createTransactionRow(transaction) {
   return newItem;
 }
 
-function createEmptyState() {
+function displayEmptyState() {
   const emptyStateDiv = document.createElement("div");
   emptyStateDiv.classList.add("empty-state");
 
@@ -192,4 +172,30 @@ function createEmptyState() {
   emptyStateDiv.append(symbol, headline, textMessage);
 
   return emptyStateDiv;
+}
+
+function displayVaultError(selectors) {
+  const errorStateDisplay = document.createElement("div");
+  errorStateDisplay.classList.add("empty-state");
+
+  const vaultErrorIcon = document.createElement("span");
+  vaultErrorIcon.classList.add("material-symbols-outlined");
+  vaultErrorIcon.textContent = "cloud_off";
+
+  const vaultErrorMsg = document.createElement("p");
+  vaultErrorMsg.textContent =
+    "Vault connection is weak. Your history couldn't be loaded.";
+
+  const retryBtn = document.createElement("button");
+  retryBtn.id = "retry-btn";
+  retryBtn.textContent = "Retry connection";
+  retryBtn.addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  errorStateDisplay.append(vaultErrorIcon, vaultErrorMsg, retryBtn);
+  selectors.transactionList.appendChild(errorStateDisplay);
+
+  selectors.totalDepositDisplay.textContent = "--";
+  selectors.totalWithdrawDisplay.textContent = "--";
 }
