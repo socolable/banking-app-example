@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "./config.js";
-import { displayTotals } from "./finance.js";
+import { calculateTotals } from "./finance.js";
 import { formatNumber } from "./util.js";
 
 const toastContainer = document.querySelector("#toast-container");
@@ -30,6 +30,14 @@ export function showLoading(selectors) {
   loadingContainer.appendChild(loadingTextMessage);
 
   selectors.transactionList.appendChild(loadingContainer);
+}
+
+export function applyTheme(theme) {
+  if (theme === "dark") {
+    document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
+  }
 }
 
 export function showToast(message = "Success!") {
@@ -68,13 +76,37 @@ function hideSpinner(selectors) {
   selectors.withdrawBtn.textContent = `Withdraw`;
 }
 
+export function displayTotals(totals, selectors) {
+  selectors.totalDepositDisplay.textContent = formatNumber(
+    totals.totalDeposits,
+  );
+  selectors.totalWithdrawDisplay.textContent = formatNumber(
+    totals.totalWithdraws,
+  );
+}
+
 export function renderUI(
   currentBalance,
   transactionArr,
   selectors,
   usdToEurRate,
   usdToGBPRate,
+  vaultError,
 ) {
+  if (vaultError) {
+    console.log("Vault error reaches");
+    selectors.transactionList.innerHTML = `
+      <div class="error-state">
+        <span class="material-symbols-outlined">cloud_off</span>
+        <p>Vault connection is weak. Your history couldn't be loaded.</p>
+        <button onclick="window.location.reload()" id="retry-btn">Retry Connection</button>
+      </div>
+    `;
+    selectors.totalDepositDisplay.textContent = "---";
+    selectors.totalWithdrawDisplay.textContent = "---";
+    return;
+  }
+
   const formattedUSDBalance = formatNumber(currentBalance);
   const euroBalance = usdToEurRate * currentBalance;
   const gbpBalance = usdToGBPRate * currentBalance;
@@ -88,56 +120,23 @@ export function renderUI(
 
   selectors.balanceDisplay.textContent = `${formattedUSDBalance} | ${formattedEuro} | ${formattedGBP}`;
 
+  const totals = calculateTotals(transactionArr);
+  console.log("DEBUG: Calculated Totals:", totals);
+  displayTotals(totals, selectors);
+
+  selectors.transactionList.textContent = "";
   if (transactionArr.length === 0) {
-    selectors.transactionList.textContent = "";
-    const emptyStateDiv = document.createElement("div");
-    emptyStateDiv.classList.add("empty-state");
-
-    const symbol = document.createElement("span");
-    symbol.classList.add("material-symbols-outlined");
-    Object.assign(symbol.style, { fontSize: "48px", color: "#ccc" });
-    symbol.textContent = "account_balance_wallet";
-
-    const headline = document.createElement("h2");
-    headline.textContent = "Your vault is empty.";
-
-    const textMessage = document.createElement("p");
-    textMessage.textContent =
-      "Ready to save? Make your first deposit above to start tracking your wealth.";
-
-    emptyStateDiv.append(symbol, headline, textMessage);
-    selectors.transactionList.appendChild(emptyStateDiv);
-
-    displayTotals([], selectors);
+    const emptyStateDisplay = createEmptyState();
+    selectors.transactionList.appendChild(emptyStateDisplay);
   } else {
-    // Wipe the list and rebuild it from the Array
-    selectors.transactionList.textContent = "";
-
     transactionArr.forEach((transaction) => {
-      const newItem = document.createElement("li");
-      newItem.className = "transaction-row";
-      const newTransactionText = document.createElement("span");
-
-      newTransactionText.textContent = `${transaction.type === "deposit" ? "+" : "-"}${formatNumber(transaction.amount)} `;
-      newTransactionText.classList.add(
-        transaction.type === "deposit" ? "deposit-item" : "withdraw-item",
-      );
-
-      //create delete button with X text and add to li element
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "X";
-      deleteBtn.classList.add("delete-btn");
-
-      deleteBtn.setAttribute("data-id", transaction.id);
-      newItem.appendChild(newTransactionText);
-      newItem.appendChild(deleteBtn);
-      selectors.transactionList.appendChild(newItem);
+      const row = createTransactionRow(transaction);
+      selectors.transactionList.appendChild(row);
     });
 
     // Clear the input box
     selectors.amountInput.value = "";
   }
-  displayTotals(transactionArr, selectors);
 }
 
 export function showError(selectors, error) {
@@ -150,4 +149,47 @@ export function showError(selectors, error) {
   retryBtn.addEventListener("click", () => {
     window.location.reload();
   });
+}
+
+function createTransactionRow(transaction) {
+  const newItem = document.createElement("li");
+  newItem.className = "transaction-row";
+  const newTransactionText = document.createElement("span");
+
+  newTransactionText.textContent = `${transaction.type === "deposit" ? "+" : "-"}${formatNumber(transaction.amount)} `;
+  newTransactionText.classList.add(
+    transaction.type === "deposit" ? "deposit-item" : "withdraw-item",
+  );
+
+  //create delete button with X text and add to li element
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "X";
+  deleteBtn.classList.add("delete-btn");
+  deleteBtn.setAttribute("data-id", transaction.id);
+
+  newItem.appendChild(newTransactionText);
+  newItem.appendChild(deleteBtn);
+
+  return newItem;
+}
+
+function createEmptyState() {
+  const emptyStateDiv = document.createElement("div");
+  emptyStateDiv.classList.add("empty-state");
+
+  const symbol = document.createElement("span");
+  symbol.classList.add("material-symbols-outlined");
+  Object.assign(symbol.style, { fontSize: "48px", color: "#ccc" });
+  symbol.textContent = "account_balance_wallet";
+
+  const headline = document.createElement("h2");
+  headline.textContent = "Your vault is empty.";
+
+  const textMessage = document.createElement("p");
+  textMessage.textContent =
+    "Ready to save? Make your first deposit above to start tracking your wealth.";
+
+  emptyStateDiv.append(symbol, headline, textMessage);
+
+  return emptyStateDiv;
 }

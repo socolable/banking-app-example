@@ -6,12 +6,14 @@ import {
   showError,
   setLoading,
   showToast,
+  applyTheme,
 } from "./ui.js";
 import { loadFromVault, saveToVault } from "./storage.js";
 import { getExchangeRate } from "./api.js";
 import { getBalance, filterTransactions } from "./finance.js";
 import { debounce } from "./util.js";
 import { APP_CONFIG, STORAGE_KEYS } from "./config.js";
+import { state, updateState, subscribe } from "./state.js";
 
 // --- 1. SELECTORS ---
 const balanceDisplay = document.querySelector("#balance-display");
@@ -36,49 +38,52 @@ const selectors = {
   totalWithdrawDisplay,
 };
 
-// --- 2. DATA STATE (The "Source of Truth") ---
-
-const state = {
-  history: [],
-  usdToEurRate: 1,
-  usdToGBPRate: 1,
-  isLoading: true,
-};
-
-// THEME CHECK
-const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-if (savedTheme === "dark") {
-  document.body.classList.add("dark-mode");
-}
-
 const themeBtn = document.querySelector("#theme-toggle");
+
+// --- 2. DATA STATE (The "Source of Truth") ---
 
 showLoading(selectors);
 
+subscribe(() => {
+  updateApp();
+});
+
 async function initApp() {
-  setLoading(state.isLoading, selectors);
+  updateState("SET_LOADING", true);
+  updateState("SET_ERROR", false);
   try {
-    const savedData = await loadFromVault();
-    state.history = savedData.history;
-
-    updateApp();
-
-    [state.usdToEurRate, state.usdToGBPRate] = await Promise.all([
-      getExchangeRate("USD", "EUR"),
-      getExchangeRate("USD", "GBP"),
+    console.log("1. Starting Promise.all...");
+    const [savedData, eurRate, gbpRate] = await Promise.all([
+      loadFromVault().catch((err) => {
+        console.warn("Vault timed out, but we are keeping the app alive.");
+        return { history: [], error: true }; // Flag that the load failed
+      }),
+      getExchangeRate("USD", "EUR").catch(() => 1), // Default to 1, not 0
+      getExchangeRate("USD", "GBP").catch(() => 1),
     ]);
 
-    updateApp();
+    console.log("2. Data Received:", savedData);
+
+    updateState("SET_HISTORY", savedData.history || []);
+    updateState("SET_ERROR", savedData.error || false);
+    updateState("SET_RATES", { eur: eurRate || 0, gbp: gbpRate || 0 });
+    console.log("3. Data Actions Dispatched");
   } catch (e) {
-    showError(selectors, e);
+    console.error("CRITICAL INIT ERROR:", e);
+    //showError(selectors, e);
+    updateState("SET_ERROR", true);
   } finally {
-    state.isLoading = false;
-    setLoading(state.isLoading, selectors);
+    console.log("4. Turning off loader...");
+    updateState("SET_LOADING", false);
   }
 }
 initApp();
 
-function updateApp(dataToShow = state.history) {
+export function updateApp(dataToShow = state.history) {
+  if (state.isLoading) return;
+
+  applyTheme(state.theme);
+
   const currentBalance = getBalance(state.history);
   renderUI(
     currentBalance,
@@ -86,7 +91,13 @@ function updateApp(dataToShow = state.history) {
     selectors,
     state.usdToEurRate,
     state.usdToGBPRate,
+    state.vaultError,
   );
+
+  if (themeBtn) {
+    themeBtn.textContent =
+      state.theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+  }
 }
 
 const handleSearch = debounce(() => {
@@ -104,15 +115,15 @@ function handleDataChange() {
       openModal("Vault is full! Please clear some history.", () => {});
     }
   }
-  updateApp();
 }
 // --- 3. EVENT LISTENERS ---
 
-themeBtn.addEventListener("click", () => {
-  const isDark = document.body.classList.toggle("dark-mode");
-  themeBtn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
-  localStorage.setItem(STORAGE_KEYS.THEME, isDark ? "dark" : "light");
-});
+if (themeBtn) {
+  themeBtn.addEventListener("click", () => {
+    const nextTheme = state.theme === "light" ? "dark" : "light";
+    updateState("SET_THEME", nextTheme);
+  });
+}
 
 depositBtn.addEventListener("click", (e) => {
   const rawValue = amountInput.value;
@@ -127,7 +138,8 @@ depositBtn.addEventListener("click", (e) => {
 
   const amount = Number(rawValue);
 
-  state.history.push({ id: Date.now(), amount, type: "deposit" });
+  const newTransaction = { id: Date.now(), amount, type: "deposit" };
+  updateState("ADD_TRANSACTION", newTransaction);
 
   showToast();
   handleDataChange();
@@ -156,7 +168,8 @@ withdrawBtn.addEventListener("click", (e) => {
   if (amount > getBalance(state.history)) {
     alert("Insufficient funds!");
   } else {
-    state.history.push({ id: Date.now(), amount, type: "withdraw" });
+    const newTransaction = { id: Date.now(), amount, type: "withdraw" };
+    updateState("ADD_TRANSACTION", newTransaction);
     handleDataChange();
   }
 
@@ -210,7 +223,7 @@ export function openModal(message, onConfirm) {
 
 clearAllBtn.addEventListener("click", () => {
   openModal("Clear all now?", () => {
-    state.history.splice(0, state.history.length);
+    updateState("SET_HISTORY", []);
     handleDataChange();
   });
 });
@@ -229,9 +242,7 @@ transactionList.addEventListener("click", (e) => {
     // If cannot find the itemToDelete for some reason, stop
     if (!itemToDelete) return;
 
-    state.history = state.history.filter(
-      (transaction) => transaction.id !== idToDelete,
-    );
+    updateState("DELETE_TRANSACTION", idToDelete);
     handleDataChange();
   }
 });
@@ -246,6 +257,5 @@ window.addEventListener("unhandledrejection", (event) => {
   showToast("Vault connection interrupted. Please check your network.");
 
   // If the error happened during the initial load, hide the loader
-  state.isLoading = false;
-  setLoading(state.isLoading, selectors);
+  updateState("SET_LOADING", false);
 });

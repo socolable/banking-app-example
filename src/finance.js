@@ -16,7 +16,7 @@ export function filterTransactions(searchTerm, history) {
   return filteredTransactions;
 }
 
-export function displayTotals(transactionArr, selectors) {
+export function calculateTotals(transactionArr) {
   const data = transactionArr || [];
 
   const totalDeposits = data
@@ -27,6 +27,5 @@ export function displayTotals(transactionArr, selectors) {
     .filter((transaction) => transaction.type === "withdraw")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
-  selectors.totalDepositDisplay.textContent = formatNumber(totalDeposits);
-  selectors.totalWithdrawDisplay.textContent = formatNumber(totalWithdraws);
+  return { totalDeposits, totalWithdraws };
 }
